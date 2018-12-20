@@ -36,7 +36,7 @@ def generate_output(all_check, digests, simple, function):
     if simple:
         # Check if we have one or all digests
         if all_check:
-            output = "{}\n{}\n{}".format(digests)
+            output = "{}\n{}\n{}".format(digests[0], digests[1], digests[2])
         else:
             output = digests[0]
 

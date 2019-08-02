@@ -1,8 +1,8 @@
 import hashlib
 
 ####### HELPER FUNCTIONS #######
-def load_file(filename):
-    f = open(filename, 'rb')
+def load_file(file_name):
+    f = open(file_name, 'rb')
     read = f.read()
     f.close()
     return read
@@ -19,24 +19,24 @@ def hash_sha1(data):
     sha1 = hashlib.sha1(data)
     return sha1.hexdigest()
 
-def save_to_file(fileName, output, function):
+def save_to_file(file_name, output, function):
     try:
-        f = open('{}.{}'.format(fileName, function), "w")
+        f = open(f'{file_name}.{function}', "w")
         f.write(output)
         f.close()
     except:
-        print('Unable to save file: ' + '{}.{}'.format(fileName, function))
+        print(f'Unable to save file: {file_name}.{function}')
 
 # Pass in the flags for all functions vs one function, the list of digests, 
 # whether or not we want a simple output, and which function to use
-def generate_output(all_check, digests, simple, function):
+def generate_output(all_check, digests, simple, function, file_name):
     output = None
 
     # Check if the user wants a simple output or not.
     if simple:
         # Check if we have one or all digests
         if all_check:
-            output = "{}\n{}\n{}".format(digests[0], digests[1], digests[2])
+            output = f'{digests[0]}\n{digests[1]}\n{digests[2]}'
         else:
             output = digests[0]
 
@@ -44,9 +44,9 @@ def generate_output(all_check, digests, simple, function):
     else:
         # Check again if we have one or all digests
         if all_check:
-            output = 'Filename:\t{}\nSHA256 Hash:\t{}\nMD5 Hash:\t{}\nSHA1 Hash:\t{}'.format(file, digests[0], digests[1], digests[2])
+            output = f'Filename:\t{file_name}\nSHA256 Hash:\t{digests[0]}\nMD5 Hash:\t{digests[1]}\nSHA1 Hash:\t{digests[2]}'
         else:
-            output = 'Filename:\t{}\n{} Hash:\t{}'.format(file, function.upper(), digests[0])
+            output = f'Filename:\t{file_name}\n{function.upper()} Hash:\t{digests[0]}'
     return output       
 
 ####### MAIN PROGRAM #######
@@ -70,14 +70,14 @@ if __name__ == '__main__':
     # This sticks our arguments in a dictionary, so we can look up arguments by name.
     args = vars(parser.parse_args())
 
-    file = None
+    file_name = None
     data = None
     try:
-        file = os.path.abspath(args['file'])
-        data = load_file(file)
+        file_name = os.path.abspath(args['file'])
+        data = load_file(file_name)
 
     except FileNotFoundError:
-        print('File {} not found'.format(file))
+        print(f'File {file_name} not found')
     
     except Exception:
         parser.print_usage()
@@ -103,10 +103,10 @@ if __name__ == '__main__':
             digests = [sha256_digest, md5_digest, sha1_digest]
             function = 'all'
         
-        output = generate_output(args['all'], digests, args['simple'], function)
+        output = generate_output(args['all'], digests, args['simple'], function, file_name)
         # Check if user wants file output or not.
         if args['output']:
-            save_to_file(os.path.basename(file), output, function)
+            save_to_file(os.path.basename(file_name), output, function)
         else:
             print(output)
         
